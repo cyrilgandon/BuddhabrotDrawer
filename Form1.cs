@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
 
 namespace BuddhabrotDrawer
 {
@@ -57,126 +58,72 @@ namespace BuddhabrotDrawer
             this.Text = $"{elapsed.TotalSeconds.ToString("0.00")}s";
         }
 
-
-
-        private void mnuFileSave_Click(object sender, EventArgs e)
-        {
-            /*   if (sfdBrot.ShowDialog() == DialogResult.OK)
-               {
-                   string file_name = sfdBrot.FileName;
-                   if (!file_name.Contains(".")) file_name += ".bmp";
-                   string ext = file_name.Substring(file_name.LastIndexOf(".")).ToLower();
-
-                   switch (ext)
-                   {
-                       case ".bmp":
-                           BrotBitmap.Save(file_name, ImageFormat.Bmp);
-                           break;
-                       case ".bmgif":
-                           BrotBitmap.Save(file_name, ImageFormat.Gif);
-                           break;
-                       case ".jpg":
-                       case ".jpeg":
-                           BrotBitmap.Save(file_name, ImageFormat.Jpeg);
-                           break;
-                       case ".png":
-                           BrotBitmap.Save(file_name, ImageFormat.Png);
-                           break;
-                       case ".tif":
-                       case ".tiff":
-                           BrotBitmap.Save(file_name, ImageFormat.Tiff);
-                           break;
-                       default:
-                           MessageBox.Show("Unknown file type " + ext);
-                           break;
-                   }
-               }*/
-        }
-
         private void btnDraw_Click(object sender, EventArgs e)
         {
             IsRunning = !IsRunning;
         }
 
-        // Draw the Buddhabrot until stopped or
-        // we plot the desired number of points.
+        Buddhabrot buddhaRed;
+        Buddhabrot buddhaGreen;
+        Buddhabrot buddhaBlue;
         async private Task DrawBrots()
         {
-            await Task.WhenAll(
-              DrawBrot(picCanvas, completionLabel1, drawingCompletionLabel1, Color.Red),
-              DrawBrot(pictureBox1, completionLabel2, drawingCompletionLabel2, Color.Green),
-              DrawBrot(pictureBox2, completionLabel3 ,drawingCompletionLabel3, Color.Blue));
-        }
-
-        async private Task DrawBrot(PictureBox pictureBox, Label completetionLabel, Label drawingCompletetionLabel, Color color)
-        {
-            // Get parameters.
             int size = int.Parse(txtWidth.Text);
-            int cutoff = int.Parse(txtRedCutoff.Text);
-            int hitsMax = int.Parse(txtStopAfter.Text);
-            int reportEvery = int.Parse(txtDrawEvery.Text);
+            long hitsMax = long.Parse(txtStopAfter.Text);
 
-            if (size <= 0)
-            {
-                MessageBox.Show("Invalid parameter", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            var budda = new Buddhabrot(size, hitsMax);
+            buddhaRed = new Buddhabrot(size, 2000, hitsMax);
+            buddhaGreen = new Buddhabrot(size, 200, hitsMax);
+            buddhaBlue = new Buddhabrot(size, 20, hitsMax);
 
-            var drawingProgress = new Progress<int>(percent =>
-            {
-                drawingCompletetionLabel.Text = $"Rendering... {percent}%";
-            });
+            await Task.WhenAll(
+              DrawBrot(buddhaRed, picCanvas, completionLabel1, drawingCompletionLabel1, Color.Red),
+              DrawBrot(buddhaGreen, pictureBox1, completionLabel2, drawingCompletionLabel2, Color.Green),
+              DrawBrot(buddhaBlue, pictureBox2, completionLabel3, drawingCompletionLabel3, Color.Blue));
 
-            bool drawing = false;
-            var progress = new Progress<Buddhabrot>(async (value) =>
+        }
+        
+        async private Task DrawBrot(Buddhabrot buddha, PictureBox pictureBox, Label completetionLabel, Label drawingCompletetionLabel, Color color)
+        {
+            int reportEveryPercent = int.Parse(txtDrawEvery.Text);
+            
+            var progress = new Progress<BuddhabrotReportProgress>(reportProgress =>
             {
-                completetionLabel.Text= $"Completion: {value.Completion}%";
-                if (!drawing)
+                int lastDraw = 0;
+                var buddhabrot = reportProgress.Buddhabrot;
+                completetionLabel.Text = $"Completion: {buddhabrot.Completion}%";
+                if (buddhabrot.Completion - lastDraw > reportEveryPercent)
                 {
-                    drawing = true;
-                    var bitmap = await Task.Run(() => value.DisplayBrot(drawingProgress, color));
+                    lastDraw = buddhabrot.Completion;
+                    var drawer = new BuddhabrotMonoColor(buddhabrot);
+                    var bitmap = drawer.Draw();
                     pictureBox.Image = bitmap;
                     pictureBox.Refresh();
-                    drawing = false;
                 }
 
-                if (value.Completed)
+                if (reportProgress.Completed)
                 {
-                    IsRunning = false;
+                    var drawer = new BuddhabrotMonoColor(buddhabrot);
+                    var bitmap = drawer.Draw();
+                    bitmap.Save(GetSavePath(buddhabrot.Iteration), ImageFormat.Bmp);
                 }
             });
 
             await Task.Run(() =>
             {
-                budda.Run(progress, cutoff, reportEvery);
+                buddha.Run(progress);
             });
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+        
+        private string GetSavePath(int iteration)
         {
-
-        }
-
-        private void drawingCompletionLabel1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void drawingCompletionLabel2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void drawingCompletionLabel4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void drawingCompletionLabel3_Click(object sender, EventArgs e)
-        {
-
+            var directory = Path.Combine("C:\\", "temp", "buddhabrot");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string file = $"{DateTime.Now.ToFileTime()}_{iteration}k_buddhabrot.bmp";
+            
+            return Path.Combine(directory, file);
         }
     }
 }

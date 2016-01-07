@@ -10,91 +10,56 @@ namespace BuddhabrotDrawer
     public class Buddhabrot
     {
 
-        private const double XMin = -1.5;
-        private const double XMax = 1.5;
-        private const double YMin = -1.5;
-        private const double Ymax = 1.5;
+        private const double XMin = -2;
+        private const double XMax = 2;
+        private const double YMin = -2;
+        private const double Ymax = 2;
 
-        private readonly int[,] _hits;
+        public int[,] Hits { get; }
         private readonly Random Rand = new Random();
 
         public bool Completed { get; private set; }
         public int Size { get; }
-        public int HitsMax { get; }
+        public long HitsMax { get; }
+        public int Iteration { get; }
 
         public int Completion => (int)(((TotalHits * 1d) / HitsMax) * 100);
-        public int TotalHits { get; set; }
-        public Buddhabrot(int size, int hitsMax)
+        public long TotalHits { get; set; }
+        public Buddhabrot(int size, int iteration, long hitsMax)
         {
+            if (size <= 0)
+            {
+                throw new ArgumentException("size must be greater than 0");
+            }
             Size = size;
             HitsMax = hitsMax;
+            Iteration = iteration;
 
-            _hits = new int[size, size];
+            Hits = new int[size, size];
         }
 
 
-        // Draw the current image.
-        public Bitmap DisplayBrot(IProgress<int> progress, Color color)
+        public void Run(IProgress<BuddhabrotReportProgress> progress)
         {
-            var bitmap = new Bitmap(Size, Size);
-            using (var gr = Graphics.FromImage(bitmap))
-            {
-                gr.Clear(Color.Black);
-            }
-
-            double largest = double.MinValue;
-            for (int i = 0; i < Size; i++)
-            {
-                for (int j = 0; j < Size; j++)
-                {
-                    if (_hits[i, j] > largest)
-                        largest = _hits[i, j];
-                }
-
-            }
-            if (largest > 0)
-            {
-                double scaleR = color.R * 2.5 / largest;
-                double scaleG = color.G * 2.5 / largest;
-                double scaleB = color.B * 2.5 / largest;
-
-                for (int y = 0; y < Size; y++)
-                {
-                    for (int x = 0; x < Size; x++)
-                    {
-                        double r = Math.Min(255, Math.Round(_hits[x, y] * scaleR));
-                        double g = Math.Min(255, Math.Round(_hits[x, y] * scaleG));
-                        double b = Math.Min(255, Math.Round(_hits[x, y] * scaleB));
-
-                        bitmap.SetPixel(x, y, Color.FromArgb(255, (int)r, (int)g, (int)b));
-                    }
-
-                    progress.Report((int)((100.0 * y) / Size));
-                }
-            }
-            return bitmap;
-        }
-        public void Run(IProgress<Buddhabrot> progress, int cutoff, int reportEvery)
-        {
-            int previousTotalHits = 0;
+            long previousTotalHits = 0;
             do
             {
-                MakeOneOrbit(cutoff);
+                MakeOneOrbit();
 
-                if (TotalHits - previousTotalHits > reportEvery)
+                if ((TotalHits - previousTotalHits * 1d) / HitsMax > 1 / 100d)
                 {
                     previousTotalHits = TotalHits;
-                    progress.Report(this);
+                    progress.Report(new BuddhabrotReportProgress(this));
                 }
             }
             while (TotalHits < HitsMax);
 
             Completed = true;
-            progress.Report(this);
+            progress.Report(new BuddhabrotReportProgress(this, true));
 
         }
 
-        public int MakeOneOrbit(int cutoff)
+        public long MakeOneOrbit()
         {
             int size = Size;
             double dx = (XMax - XMin) / size;
@@ -116,18 +81,22 @@ namespace BuddhabrotDrawer
             xx = x * x;
             yy = y * y;
 
+            bool divergent = false;
             // Iterate.
-            for (int i = 1; i <= cutoff; i++)
+            for (int i = 1; i <= Iteration; i++)
             {
                 y = 2 * x * y + cy;
                 x = xx - yy + cx;
                 xx = x * x;
                 yy = y * y;
-                if (xx + yy >= EscapeNorm) break;
+                if (xx + yy >= EscapeNorm)
+                {
+                    divergent = true;
+                    break;
+                }
             }
 
-            // See if we escaped.
-            if (xx + yy >= EscapeNorm)
+            if (divergent)
             {
                 // Plot.
                 x = cx;
@@ -136,13 +105,13 @@ namespace BuddhabrotDrawer
                 yy = y * y;
 
                 // Iterate.
-                for (int i = 1; i <= cutoff; i++)
+                for (int i = 1; i <= Iteration; i++)
                 {
                     int ix = (int)Math.Round((x - XMin) / dx);
                     int iy = (int)Math.Round((y - YMin) / dy);
                     if (0 <= ix && ix < size && 0 <= iy && iy < size)
                     {
-                        _hits[iy, ix]++;
+                        Hits[iy, ix]++;
                         TotalHits++;
                     }
                     else
