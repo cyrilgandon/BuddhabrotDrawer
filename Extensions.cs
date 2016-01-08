@@ -33,18 +33,13 @@ namespace BuddhabrotDrawer
             var news = bytes.Select(b => (byte)(b * (128 / mean))).ToArray();
 
             var scaled = new Bitmap(bitmap.Width, bitmap.Height);
-            var data = scaled.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            int stride = data.Stride;
-            unsafe
-            {
-                byte* ptr = (byte*)data.Scan0;
 
-                for (int y = 0; y < news.Length; y++)
-                {
-                    ptr[y] = news[y];
-                }
-            }
+            var data = scaled.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            Marshal.Copy(news, 0, data.Scan0, news.Length);
+
             scaled.UnlockBits(data);
+
             return scaled;
         }
     }

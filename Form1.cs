@@ -47,17 +47,14 @@ namespace BuddhabrotDrawer
                                     }), new ParallelOptions { MaxDegreeOfParallelism = 5 }, diteration =>
                                         {
                                             int iteration = (int)Math.Round(diteration);
-                                            var buddha = new Buddhabrot(500, iteration, 1000000000);
+                                            var buddha = new Buddhabrot(500, iteration, 1000000);
                                             buddha.Run();
                                             var drawer = new BuddhabrotMonoColor(buddha);
+                                            string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
                                             using (var bitmap = drawer.Draw())
+                                            using (var scaled = bitmap.AdjustContrast())
                                             {
-                                                bitmap.AdjustContrast();
-                                                string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
-                                                using (var scaled = bitmap.AdjustContrast())
-                                                {
-                                                    scaled.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
-                                                }
+                                                scaled.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
                                             }
                                         });
         }
