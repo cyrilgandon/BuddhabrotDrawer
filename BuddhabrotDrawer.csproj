@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -57,6 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuddhabrotUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BuddhabrotUserControl.Designer.cs">
+      <DependentUpon>BuddhabrotUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Buddhabrot.cs" />
     <Compile Include="BuddhabrotMonoColor.cs" />
     <Compile Include="BuddhabrotReportProgress.cs" />
@@ -69,6 +76,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="BuddhabrotUserControl.resx">
+      <DependentUpon>BuddhabrotUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

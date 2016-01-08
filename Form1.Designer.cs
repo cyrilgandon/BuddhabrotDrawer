@@ -38,27 +38,13 @@
             this.txtStopAfter = new System.Windows.Forms.TextBox();
             this.Label6 = new System.Windows.Forms.Label();
             this.btnDraw = new System.Windows.Forms.Button();
-            this.picCanvas = new System.Windows.Forms.PictureBox();
             this.txtWidth = new System.Windows.Forms.TextBox();
             this.Label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.drawingCompletionLabel1 = new System.Windows.Forms.Label();
-            this.drawingCompletionLabel2 = new System.Windows.Forms.Label();
-            this.drawingCompletionLabel3 = new System.Windows.Forms.Label();
-            this.drawingCompletionLabel4 = new System.Windows.Forms.Label();
-            this.completionLabel1 = new System.Windows.Forms.Label();
-            this.completionLabel2 = new System.Windows.Forms.Label();
-            this.completionLabel3 = new System.Windows.Forms.Label();
-            this.completionLabel4 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.buddhabrotUserControl3 = new BuddhabrotDrawer.BuddhabrotUserControl();
+            this.buddhabrotUserControl2 = new BuddhabrotDrawer.BuddhabrotUserControl();
+            this.buddhabrotUserControl1 = new BuddhabrotDrawer.BuddhabrotUserControl();
             this.SuspendLayout();
             // 
             // MainMenu1
@@ -129,17 +115,6 @@
             this.btnDraw.Text = "Draw";
             this.btnDraw.Click += new System.EventHandler(this.btnDraw_Click);
             // 
-            // picCanvas
-            // 
-            this.picCanvas.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.picCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picCanvas.Location = new System.Drawing.Point(3, 3);
-            this.picCanvas.Name = "picCanvas";
-            this.picCanvas.Size = new System.Drawing.Size(194, 200);
-            this.picCanvas.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picCanvas.TabIndex = 40;
-            this.picCanvas.TabStop = false;
-            // 
             // txtWidth
             // 
             this.txtWidth.Location = new System.Drawing.Point(92, 12);
@@ -158,39 +133,6 @@
             this.Label1.TabIndex = 30;
             this.Label1.Text = "Width:";
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 209);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(194, 188);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 46;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Location = new System.Drawing.Point(203, 3);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(194, 200);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox2.TabIndex = 47;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox3.Location = new System.Drawing.Point(203, 209);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(194, 188);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox3.TabIndex = 48;
-            this.pictureBox3.TabStop = false;
-            // 
             // drawingCompletionLabel1
             // 
             this.drawingCompletionLabel1.AutoSize = true;
@@ -199,89 +141,6 @@
             this.drawingCompletionLabel1.Size = new System.Drawing.Size(18, 13);
             this.drawingCompletionLabel1.TabIndex = 49;
             this.drawingCompletionLabel1.Text = " %";
-            // 
-            // drawingCompletionLabel2
-            // 
-            this.drawingCompletionLabel2.AutoSize = true;
-            this.drawingCompletionLabel2.Location = new System.Drawing.Point(427, 196);
-            this.drawingCompletionLabel2.Name = "drawingCompletionLabel2";
-            this.drawingCompletionLabel2.Size = new System.Drawing.Size(18, 13);
-            this.drawingCompletionLabel2.TabIndex = 50;
-            this.drawingCompletionLabel2.Text = " %";
-            // 
-            // drawingCompletionLabel3
-            // 
-            this.drawingCompletionLabel3.AutoSize = true;
-            this.drawingCompletionLabel3.Location = new System.Drawing.Point(211, 415);
-            this.drawingCompletionLabel3.Name = "drawingCompletionLabel3";
-            this.drawingCompletionLabel3.Size = new System.Drawing.Size(18, 13);
-            this.drawingCompletionLabel3.TabIndex = 51;
-            this.drawingCompletionLabel3.Text = " %";
-            // 
-            // drawingCompletionLabel4
-            // 
-            this.drawingCompletionLabel4.AutoSize = true;
-            this.drawingCompletionLabel4.Location = new System.Drawing.Point(427, 415);
-            this.drawingCompletionLabel4.Name = "drawingCompletionLabel4";
-            this.drawingCompletionLabel4.Size = new System.Drawing.Size(18, 13);
-            this.drawingCompletionLabel4.TabIndex = 52;
-            this.drawingCompletionLabel4.Text = " %";
-            // 
-            // completionLabel1
-            // 
-            this.completionLabel1.AutoSize = true;
-            this.completionLabel1.Location = new System.Drawing.Point(244, 179);
-            this.completionLabel1.Name = "completionLabel1";
-            this.completionLabel1.Size = new System.Drawing.Size(18, 13);
-            this.completionLabel1.TabIndex = 53;
-            this.completionLabel1.Text = " %";
-            // 
-            // completionLabel2
-            // 
-            this.completionLabel2.AutoSize = true;
-            this.completionLabel2.Location = new System.Drawing.Point(427, 175);
-            this.completionLabel2.Name = "completionLabel2";
-            this.completionLabel2.Size = new System.Drawing.Size(18, 13);
-            this.completionLabel2.TabIndex = 54;
-            this.completionLabel2.Text = " %";
-            // 
-            // completionLabel3
-            // 
-            this.completionLabel3.AutoSize = true;
-            this.completionLabel3.Location = new System.Drawing.Point(211, 393);
-            this.completionLabel3.Name = "completionLabel3";
-            this.completionLabel3.Size = new System.Drawing.Size(18, 13);
-            this.completionLabel3.TabIndex = 55;
-            this.completionLabel3.Text = " %";
-            // 
-            // completionLabel4
-            // 
-            this.completionLabel4.AutoSize = true;
-            this.completionLabel4.Location = new System.Drawing.Point(427, 393);
-            this.completionLabel4.Name = "completionLabel4";
-            this.completionLabel4.Size = new System.Drawing.Size(18, 13);
-            this.completionLabel4.TabIndex = 56;
-            this.completionLabel4.Text = " %";
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.picCanvas, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBox2, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.pictureBox3, 1, 1);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(462, 12);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.72414F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.27586F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(400, 400);
-            this.tableLayoutPanel1.TabIndex = 57;
             // 
             // label2
             // 
@@ -292,22 +151,38 @@
             this.label2.TabIndex = 58;
             this.label2.Text = " %";
             // 
+            // buddhabrotUserControl3
+            // 
+            this.buddhabrotUserControl3.Location = new System.Drawing.Point(293, 224);
+            this.buddhabrotUserControl3.Name = "buddhabrotUserControl3";
+            this.buddhabrotUserControl3.Size = new System.Drawing.Size(193, 173);
+            this.buddhabrotUserControl3.TabIndex = 61;
+            // 
+            // buddhabrotUserControl2
+            // 
+            this.buddhabrotUserControl2.Location = new System.Drawing.Point(615, 5);
+            this.buddhabrotUserControl2.Name = "buddhabrotUserControl2";
+            this.buddhabrotUserControl2.Size = new System.Drawing.Size(194, 174);
+            this.buddhabrotUserControl2.TabIndex = 60;
+            // 
+            // buddhabrotUserControl1
+            // 
+            this.buddhabrotUserControl1.Location = new System.Drawing.Point(293, 5);
+            this.buddhabrotUserControl1.Name = "buddhabrotUserControl1";
+            this.buddhabrotUserControl1.Size = new System.Drawing.Size(193, 174);
+            this.buddhabrotUserControl1.TabIndex = 59;
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnDraw;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(992, 506);
+            this.ClientSize = new System.Drawing.Size(992, 443);
+            this.Controls.Add(this.buddhabrotUserControl3);
+            this.Controls.Add(this.buddhabrotUserControl2);
+            this.Controls.Add(this.buddhabrotUserControl1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.drawingCompletionLabel1);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.completionLabel1);
-            this.Controls.Add(this.completionLabel4);
-            this.Controls.Add(this.completionLabel3);
-            this.Controls.Add(this.completionLabel2);
-            this.Controls.Add(this.drawingCompletionLabel4);
-            this.Controls.Add(this.drawingCompletionLabel3);
-            this.Controls.Add(this.drawingCompletionLabel2);
             this.Controls.Add(this.txtDrawEvery);
             this.Controls.Add(this.Label7);
             this.Controls.Add(this.txtStopAfter);
@@ -318,11 +193,6 @@
             this.Menu = this.MainMenu1;
             this.Name = "Form1";
             this.Text = "howto_buddhabrot";
-            ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -339,22 +209,13 @@
         internal System.Windows.Forms.TextBox txtStopAfter;
         internal System.Windows.Forms.Label Label6;
         internal System.Windows.Forms.Button btnDraw;
-        internal System.Windows.Forms.PictureBox picCanvas;
         internal System.Windows.Forms.TextBox txtWidth;
         internal System.Windows.Forms.Label Label1;
-        internal System.Windows.Forms.PictureBox pictureBox1;
-        internal System.Windows.Forms.PictureBox pictureBox2;
-        internal System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Label drawingCompletionLabel1;
-        private System.Windows.Forms.Label drawingCompletionLabel2;
-        private System.Windows.Forms.Label drawingCompletionLabel3;
-        private System.Windows.Forms.Label drawingCompletionLabel4;
-        private System.Windows.Forms.Label completionLabel1;
-        private System.Windows.Forms.Label completionLabel2;
-        private System.Windows.Forms.Label completionLabel3;
-        private System.Windows.Forms.Label completionLabel4;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label2;
+        private BuddhabrotUserControl buddhabrotUserControl1;
+        private BuddhabrotUserControl buddhabrotUserControl2;
+        private BuddhabrotUserControl buddhabrotUserControl3;
     }
 }
 

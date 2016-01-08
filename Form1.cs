@@ -70,60 +70,18 @@ namespace BuddhabrotDrawer
         {
             int size = int.Parse(txtWidth.Text);
             long hitsMax = long.Parse(txtStopAfter.Text);
+            int report = int.Parse(txtDrawEvery.Text);
 
-            buddhaRed = new Buddhabrot(size, 2000, hitsMax);
-            buddhaGreen = new Buddhabrot(size, 200, hitsMax);
-            buddhaBlue = new Buddhabrot(size, 20, hitsMax);
+            buddhaRed = new Buddhabrot(size, buddhabrotUserControl1.Iteration, hitsMax);
+            buddhaGreen = new Buddhabrot(size, buddhabrotUserControl2.Iteration, hitsMax);
+            buddhaBlue = new Buddhabrot(size, buddhabrotUserControl3.Iteration, hitsMax);
 
             await Task.WhenAll(
-              DrawBrot(buddhaRed, picCanvas, completionLabel1, drawingCompletionLabel1, Color.Red),
-              DrawBrot(buddhaGreen, pictureBox1, completionLabel2, drawingCompletionLabel2, Color.Green),
-              DrawBrot(buddhaBlue, pictureBox2, completionLabel3, drawingCompletionLabel3, Color.Blue));
+              buddhabrotUserControl1.DrawBrot(buddhaRed, report),
+              buddhabrotUserControl2.DrawBrot(buddhaGreen, report),
+              buddhabrotUserControl3.DrawBrot(buddhaBlue, report));
 
         }
-        
-        async private Task DrawBrot(Buddhabrot buddha, PictureBox pictureBox, Label completetionLabel, Label drawingCompletetionLabel, Color color)
-        {
-            int reportEveryPercent = int.Parse(txtDrawEvery.Text);
-            
-            var progress = new Progress<BuddhabrotReportProgress>(reportProgress =>
-            {
-                int lastDraw = 0;
-                var buddhabrot = reportProgress.Buddhabrot;
-                completetionLabel.Text = $"Completion: {buddhabrot.Completion}%";
-                if (buddhabrot.Completion - lastDraw > reportEveryPercent)
-                {
-                    lastDraw = buddhabrot.Completion;
-                    var drawer = new BuddhabrotMonoColor(buddhabrot);
-                    var bitmap = drawer.Draw();
-                    pictureBox.Image = bitmap;
-                    pictureBox.Refresh();
-                }
 
-                if (reportProgress.Completed)
-                {
-                    var drawer = new BuddhabrotMonoColor(buddhabrot);
-                    var bitmap = drawer.Draw();
-                    bitmap.Save(GetSavePath(buddhabrot.Iteration), ImageFormat.Bmp);
-                }
-            });
-
-            await Task.Run(() =>
-            {
-                buddha.Run(progress);
-            });
-        }
-        
-        private string GetSavePath(int iteration)
-        {
-            var directory = Path.Combine("C:\\", "temp", "buddhabrot");
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            string file = $"{DateTime.Now.ToFileTime()}_{iteration}k_buddhabrot.bmp";
-            
-            return Path.Combine(directory, file);
-        }
     }
 }

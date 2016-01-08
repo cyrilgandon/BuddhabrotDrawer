@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -148,6 +149,20 @@ namespace BuddhabrotDrawer
         public bool IsInBulb(double x, double y)
         {
             return (x + 1) * (x + 1) + y * y < 0.0625; // 1/16
+        }
+
+
+
+        public static string GetSavePath(int iteration)
+        {
+            var directory = Path.Combine("C:\\", "temp", "buddhabrot");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string file = $"{DateTime.Now.ToFileTime()}_{iteration}k_buddhabrot.bmp";
+
+            return Path.Combine(directory, file);
         }
     }
 }
