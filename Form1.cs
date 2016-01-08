@@ -16,72 +16,46 @@ namespace BuddhabrotDrawer
 {
     public partial class Form1 : Form
     {
-        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-
-        DateTime _startTime;
-        private bool _isRunning;
-        private bool IsRunning
-        {
-            get
-            {
-                return _isRunning;
-            }
-            set
-            {
-                _isRunning = value;
-                if (value)
-                {
-                    _startTime = DateTime.Now;
-                    btnDraw.Text = "Stop";
-                    timer.Start();
-                    DrawBrots();
-                }
-                else
-                {
-                    timer.Stop();
-                    btnDraw.Text = "Draw";
-                }
-            }
-        }
-
         public Form1()
         {
             InitializeComponent();
 
-            timer.Interval = 40;
-            timer.Tick += Timer_Tick;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            var elapsed = DateTime.Now - _startTime;
-            this.Text = $"{elapsed.TotalSeconds.ToString("0.00")}s";
-        }
-
-        private void btnDraw_Click(object sender, EventArgs e)
-        {
-            IsRunning = !IsRunning;
-        }
-
-        Buddhabrot buddhaRed;
-        Buddhabrot buddhaGreen;
-        Buddhabrot buddhaBlue;
         async private Task DrawBrots()
         {
-            int size = int.Parse(txtWidth.Text);
-            long hitsMax = long.Parse(txtStopAfter.Text);
-            int report = int.Parse(txtDrawEvery.Text);
-
-            buddhaRed = new Buddhabrot(size, buddhabrotUserControl1.Iteration, hitsMax);
-            buddhaGreen = new Buddhabrot(size, buddhabrotUserControl2.Iteration, hitsMax);
-            buddhaBlue = new Buddhabrot(size, buddhabrotUserControl3.Iteration, hitsMax);
-
             await Task.WhenAll(
-              buddhabrotUserControl1.DrawBrot(buddhaRed, report),
-              buddhabrotUserControl2.DrawBrot(buddhaGreen, report),
-              buddhabrotUserControl3.DrawBrot(buddhaBlue, report));
-
+              buddhabrotUserControl1.DrawBrot(),
+              buddhabrotUserControl2.DrawBrot(),
+              buddhabrotUserControl3.DrawBrot());
         }
+        private void btnDraw_Click(object sender, EventArgs e)
+        {
+            int count = 100;
+            int maxIteration = 2000000;
+            var directory = Path.Combine("C:\\", "temp", $"{DateTime.Now.ToFileTime()}-Buddhabrot-c{count}-m{maxIteration}");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
 
+            Parallel.ForEach(Enumerable.Range(0, count)
+                                    .Select(i =>
+                                    {
+                                        // will generate 'count' numbers between 1 and 'maxIteration' logarithmic distribution
+                                        return Math.Exp(i * Math.Log(maxIteration) / count);
+                                    }), new ParallelOptions { MaxDegreeOfParallelism = 5 }, diteration =>
+                                        {
+                                            int iteration = (int)Math.Round(diteration);
+                                            var buddha = new Buddhabrot(500, iteration, 100000000);
+                                            buddha.Run();
+                                            var drawer = new BuddhabrotMonoColor(buddha);
+                                            var bitmap = drawer.Draw();
+
+                                            string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.bmp";
+
+                                            bitmap.Save(Path.Combine(directory, file), ImageFormat.Bmp);
+                                        });
+        }
     }
 }

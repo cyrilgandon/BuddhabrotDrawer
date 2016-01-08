@@ -40,7 +40,7 @@ namespace BuddhabrotDrawer
         }
 
 
-        public void Run(IProgress<BuddhabrotReportProgress> progress)
+        public void Run(IProgress<BuddhabrotReportProgress> progress = null)
         {
             long previousTotalHits = 0;
             do
@@ -50,13 +50,19 @@ namespace BuddhabrotDrawer
                 if ((TotalHits - previousTotalHits * 1d) / HitsMax > 1 / 100d)
                 {
                     previousTotalHits = TotalHits;
-                    progress.Report(new BuddhabrotReportProgress(this));
+                    if (progress != null)
+                    {
+                        progress.Report(new BuddhabrotReportProgress(this));
+                    }
                 }
             }
             while (TotalHits < HitsMax);
 
             Completed = true;
-            progress.Report(new BuddhabrotReportProgress(this, true));
+            if (progress != null)
+            {
+                progress.Report(new BuddhabrotReportProgress(this, true));
+            }
 
         }
 
@@ -160,7 +166,7 @@ namespace BuddhabrotDrawer
             {
                 Directory.CreateDirectory(directory);
             }
-            string file = $"{DateTime.Now.ToFileTime()}_{iteration}k_buddhabrot.bmp";
+            string file = $"{DateTime.Now.ToFileTime()}_{iteration}_iteration_buddhabrot.bmp";
 
             return Path.Combine(directory, file);
         }

@@ -13,25 +13,24 @@ namespace BuddhabrotDrawer
 {
     public partial class BuddhabrotUserControl : UserControl
     {
+        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+        private Buddhabrot _buddha;
+
         public BuddhabrotUserControl()
         {
             InitializeComponent();
         }
+        
 
-        public BuddhabrotUserControl(Buddhabrot Buddhabot)
+        async public Task DrawBrot()
         {
-            InitializeComponent();
-        }
-
-
-        async public Task DrawBrot(Buddhabrot buddha, int reportEveryPercent)
-        {
+            var buddha = new Buddhabrot(SizePixel, Iteration, Hits);
             var progress = new Progress<BuddhabrotReportProgress>(reportProgress =>
             {
                 int lastDraw = 0;
                 var buddhabrot = reportProgress.Buddhabrot;
-                this.label1.Text = $"Completion: {buddhabrot.Completion}%";
-                if (buddhabrot.Completion - lastDraw > reportEveryPercent)
+                this.completionLabel.Text = $"Completion: {buddhabrot.Completion}%";
+                if (buddhabrot.Completion - lastDraw > 1)
                 {
                     lastDraw = buddhabrot.Completion;
                     var drawer = new BuddhabrotMonoColor(buddhabrot);
@@ -54,11 +53,12 @@ namespace BuddhabrotDrawer
             });
         }
 
-        public int Iteration => (int)numericUpDown1.Value;
-
-        private void button1_Click(object sender, EventArgs e)
+        public int Iteration => (int)iterationNumericUpDown.Value;
+        public int SizePixel => (int)sizeNumericUpDown.Value;
+        public int Hits => (int)pointsCountNumericUpDown.Value;
+        async private void button1_Click(object sender, EventArgs e)
         {
-
+            await DrawBrot();
         }
     }
 }
