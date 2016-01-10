@@ -10,11 +10,11 @@ namespace BuddhabrotDrawer
 {
     public class Buddhabrot
     {
-
-        private const double XMin = -2;
-        private const double XMax = 2;
-        private const double YMin = -2;
-        private const double Ymax = 2;
+      const  int t = 2;
+        private const double XMin = -t;
+        private const double XMax = t;
+        private const double YMin = -t;
+        private const double Ymax = t;
 
         public int[,] Hits { get; }
         private readonly Random Rand = new Random();
@@ -123,14 +123,14 @@ namespace BuddhabrotDrawer
                     }
                     else
                     {
-                        break;
+                       // break;
                     }
 
                     y = 2 * x * y + cy;
                     x = xx - yy + cx;
                     xx = x * x;
                     yy = y * y;
-                    if (xx + yy >= EscapeNorm) break;
+                    if (xx + yy >= EscapeNorm*10) break;
                 }
 
             }

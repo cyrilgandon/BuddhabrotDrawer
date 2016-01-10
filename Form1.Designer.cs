@@ -40,6 +40,7 @@
             this.buddhabrotUserControl3 = new BuddhabrotDrawer.BuddhabrotUserControl();
             this.buddhabrotUserControl1 = new BuddhabrotDrawer.BuddhabrotUserControl();
             this.buddhabrotUserControl2 = new BuddhabrotDrawer.BuddhabrotUserControl();
+            this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -144,12 +145,22 @@
             this.buddhabrotUserControl2.Size = new System.Drawing.Size(437, 203);
             this.buddhabrotUserControl2.TabIndex = 1;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(15, 106);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 51;
+            this.button1.Text = "Draw";
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnDraw;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(992, 443);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.drawingCompletionLabel1);
             this.Controls.Add(this.btnDraw);
@@ -175,6 +186,7 @@
         private BuddhabrotUserControl buddhabrotUserControl1;
         private BuddhabrotUserControl buddhabrotUserControl3;
         private BuddhabrotUserControl buddhabrotUserControl4;
+        internal System.Windows.Forms.Button button1;
     }
 }
 
