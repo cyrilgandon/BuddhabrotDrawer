@@ -58,6 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuddhabrotPoint.cs" />
+    <Compile Include="MultiBuddhabrot.cs" />
     <Compile Include="BuddhabrotUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

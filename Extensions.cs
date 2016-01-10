@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,7 +18,22 @@ namespace BuddhabrotDrawer
             return param;
         }
 
-        public static Bitmap AdjustContrast(this Bitmap bitmap)
+        /// <summary>
+        /// Return count element between 0 and max, with a logarithmic distribution
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static IEnumerable<double> LogDistribution(int count, double max)
+        {
+            return Enumerable.Range(0, count)
+                                     .Select(i =>
+                                     {
+                                         return Math.Exp(i * Math.Log(max) / count);
+                                     });
+        }
+
+        public static Bitmap AdjustContrast(this Bitmap bitmap, double black = 0.05,  double white = 0.95)
         {
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             var length = bitmapData.Stride * bitmapData.Height;
@@ -37,32 +53,34 @@ namespace BuddhabrotDrawer
             var total = histo.Sum();
 
             double cumulPercent = 0;
-            int? _5 = null, _95 = null;
+            double? blackLimit = null, whiteLimit = null;
             for (int i = 0; i < histo.Length; i++)
             {
                 cumulPercent += (histo[i] * 1d) / total;
-                if (cumulPercent > 0.05 && _5 == null)
+                if (cumulPercent > black && blackLimit == null)
                 {
-                    _5 = i;
+                    blackLimit = i;
                 }
-                if (cumulPercent > 0.95 && _95 == null)
+                if (cumulPercent > white && whiteLimit == null)
                 {
-                    _95 = i;
+                    whiteLimit = i;
                 }
             }
+            if (black <= 0) blackLimit = 0;
+            if (white >= 1) whiteLimit = 255;
             double a, b;
-            if (_5 == 0)
+            if (blackLimit == 0)
             {
-                if (_95 == 0)
+                if (whiteLimit == 0)
                 {
-                    _95 = 1;
+                    whiteLimit = 1;
                 }
                 b = 0;
-                a = 255 / _95.Value;
+                a = 255 / whiteLimit.Value;
             }
             else {
-                b = 255 / (1 - _95.Value / _5.Value);
-                a = (255 - b) / _95.Value;
+                b = 255 / (1 - whiteLimit.Value / blackLimit.Value);
+                a = (255 - b) / whiteLimit.Value;
             }
 
             var news = greys.Select(g =>
@@ -115,6 +133,39 @@ namespace BuddhabrotDrawer
             scaled.UnlockBits(data);
 
             return scaled;
+        }
+
+
+        /// <summary>
+        /// https://en.wikipedia.org/wiki/Mandelbrot_set#Optimizations
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static bool IsInCardiod(double x, double y)
+        {
+            double yy = y * y;
+            double xMinusQuarter = x - 0.25;
+            double q = xMinusQuarter * xMinusQuarter + yy;
+            return q * (q + xMinusQuarter) < 0.25 * yy;
+        }
+
+        public static bool IsInBulb(double x, double y)
+        {
+            return (x + 1) * (x + 1) + y * y < 0.0625; // 1/16
+        }
+
+
+        public static string GetSavePath(int iteration)
+        {
+            var directory = Path.Combine("C:\\", "temp", "buddhabrot");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string file = $"{DateTime.Now.ToFileTime()}_{iteration}_iteration_buddhabrot.bmp";
+
+            return Path.Combine(directory, file);
         }
     }
 }

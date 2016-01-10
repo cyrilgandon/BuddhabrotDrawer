@@ -29,34 +29,44 @@ namespace BuddhabrotDrawer
               buddhabrotUserControl2.DrawBrot(),
               buddhabrotUserControl3.DrawBrot());
         }
-        private void btnDraw_Click(object sender, EventArgs e)
+        async private void btnDraw_Click(object sender, EventArgs e)
         {
-            int count = 100;
+            int count = 750;
             int maxIteration = 2000;
+            int size = 200;
+            long resolution = 10000000;
             var directory = Path.Combine("C:\\", "temp", $"{DateTime.Now.ToFileTime()}-Buddhabrot-c{count}-m{maxIteration}");
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
-
-            Parallel.ForEach(Enumerable.Range(0, count)
-                                    .Select(i =>
-                                    {
-                                        // will generate 'count' numbers between 1 and 'maxIteration' logarithmic distribution
-                                        return Math.Exp(i * Math.Log(maxIteration) / count);
-                                    }), new ParallelOptions { MaxDegreeOfParallelism = 1 }, diteration =>
-                                        {
-                                            int iteration = (int)Math.Round(diteration);
-                                            var buddha = new Buddhabrot(500, iteration, 10000000);
-                                            buddha.Run();
-                                            var drawer = new BuddhabrotMonoColor(buddha);
-                                            string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
-                                            using (var bitmap = drawer.Draw())
-                                            using (var scaled = bitmap.AdjustContrast())
-                                            {
-                                                scaled.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
-                                            }
-                                        });
+            var m = new MultiBuddhabrot(size, maxIteration, resolution);
+            m.Run();
+            foreach (int iteration in Extensions.LogDistribution(count, maxIteration).Select(a => (int)a).Distinct())
+            {
+                var tab = m.GetFor(iteration);
+                var drawer = new BuddhabrotMonoColor();
+                string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
+                using (var bitmap = drawer.Draw(tab, size))
+                {
+                    bitmap.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
+                }
+            }
+            //await Task.Run(() => Parallel.ForEach(Extensions.LogDistribution(count, maxIteration).Distinct(),
+            //    new ParallelOptions { MaxDegreeOfParallelism = 1 },
+            //    diteration =>
+            //    {
+            //        int iteration = (int)Math.Round(diteration);
+            //        var buddha = new Buddhabrot(500, iteration, 10000000);
+            //        buddha.Run();
+            //        var drawer = new BuddhabrotMonoColor(buddha);
+            //        string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
+            //        using (var bitmap = drawer.Draw(buddha))
+            //        using (var scaled = bitmap.AdjustContrast())
+            //        {
+            //            scaled.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
+            //        }
+            //    }));
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -77,7 +87,7 @@ namespace BuddhabrotDrawer
             {
                 var info = new FileInfo(file);
                 using (var bitmap = (Bitmap)Image.FromFile(file))
-                using (var contrasted = bitmap.AdjustContrast())
+                using (var contrasted = bitmap.AdjustContrast(0.1, 0.999))
                 {
                     contrasted.Save(Path.Combine(contrastDirectory, info.Name), ImageFormat.Bmp);
                     using (var mean = contrasted.SetMean(128))

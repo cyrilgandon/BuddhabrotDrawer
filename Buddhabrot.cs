@@ -74,7 +74,7 @@ namespace BuddhabrotDrawer
             double cx = XMin + Rand.NextDouble() * (XMax - XMin);
             double cy = YMin + Rand.NextDouble() * (Ymax - YMin);
 
-            if (IsInBulb(cx, cy) || IsInCardiod(cx, cy))
+            if (Extensions.IsInBulb(cx, cy) || Extensions.IsInCardiod(cx, cy))
             {
                 return TotalHits;
             }
@@ -137,27 +137,7 @@ namespace BuddhabrotDrawer
 
             return TotalHits;
         }
-
-        /// <summary>
-        /// https://en.wikipedia.org/wiki/Mandelbrot_set#Optimizations
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public bool IsInCardiod(double x, double y)
-        {
-            double yy = y * y;
-            double xMinusQuarter = x - 0.25;
-            double q = xMinusQuarter * xMinusQuarter + yy;
-            return q * (q + xMinusQuarter) < 0.25 * yy;
-        }
-
-        public bool IsInBulb(double x, double y)
-        {
-            return (x + 1) * (x + 1) + y * y < 0.0625; // 1/16
-        }
-
-
+        
 
         public static string GetSavePath(int iteration)
         {

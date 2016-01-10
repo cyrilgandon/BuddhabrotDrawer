@@ -33,16 +33,16 @@ namespace BuddhabrotDrawer
                 if (buddhabrot.Completion - lastDraw > 1)
                 {
                     lastDraw = buddhabrot.Completion;
-                    var drawer = new BuddhabrotMonoColor(buddhabrot);
-                    var bitmap = drawer.Draw();
+                    var drawer = new BuddhabrotMonoColor();
+                    var bitmap = drawer.Draw(buddhabrot.Hits, buddhabrot.Size);
                     this.picCanvas.Image = bitmap;
                     this.picCanvas.Refresh();
                 }
 
                 if (reportProgress.Completed)
                 {
-                    var drawer = new BuddhabrotMonoColor(buddhabrot);
-                    var bitmap = drawer.Draw();
+                    var drawer = new BuddhabrotMonoColor();
+                    var bitmap = drawer.Draw(buddhabrot);
                     bitmap.Save(Buddhabrot.GetSavePath(buddhabrot.Iteration), ImageFormat.Bmp);
                 }
             });
