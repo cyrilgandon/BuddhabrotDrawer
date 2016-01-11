@@ -31,8 +31,8 @@ namespace BuddhabrotDrawer
         }
         async private void btnDraw_Click(object sender, EventArgs e)
         {
-            int count = 750;
-            int maxIteration = 2000;
+            int count = 600;
+            int maxIteration = 20000;
             int size = 200;
             long resolution = 10000000;
             var directory = Path.Combine("C:\\", "temp", $"{DateTime.Now.ToFileTime()}-Buddhabrot-c{count}-m{maxIteration}");
@@ -42,18 +42,21 @@ namespace BuddhabrotDrawer
             }
             var m = new MultiBuddhabrot(size, maxIteration, resolution);
             m.Run();
-            foreach (int iteration in Extensions.LogDistribution(count, maxIteration).Select(a => (int)a).Distinct())
-            {
-                var tab = m.GetFor(iteration);
-                var drawer = new BuddhabrotMonoColor();
-                string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot.jpg";
-                using (var bitmap = drawer.Draw(tab, size))
-                {
-                    bitmap.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
-                }
-            }
+            await Task.Run(() => Parallel.ForEach(Extensions.LogDistribution(count, maxIteration).Select(a => (int)Math.Round(a)),
+                 new ParallelOptions { MaxDegreeOfParallelism = 5 },
+                 iteration =>
+                 {
+                     var tab = m.GetFor(iteration);
+                     var drawer = new BuddhabrotMonoColor();
+                     string file = $"{iteration.ToString().PadLeft(maxIteration.ToString().Count(), '0')}_buddhabrot_{DateTime.Now.ToFileTime()}.jpg";
+                     using (var bitmap = drawer.Draw(tab, size))
+                     {
+                         bitmap.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
+                     }
+                 }));
+
             //await Task.Run(() => Parallel.ForEach(Extensions.LogDistribution(count, maxIteration).Distinct(),
-            //    new ParallelOptions { MaxDegreeOfParallelism = 1 },
+            //   
             //    diteration =>
             //    {
             //        int iteration = (int)Math.Round(diteration);
@@ -71,31 +74,22 @@ namespace BuddhabrotDrawer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var directory = @"C:\Buddhabrot\130967322289921676-Buddhabrot-c100-m2000000";
+            var directory = @"C:\temp\130969712683370538-Buddhabrot-c600-m20000";
             var contrastDirectory = Path.Combine(directory, "contrast");
-            var meanDirectory = Path.Combine(directory, "mean");
             if (!Directory.Exists(contrastDirectory))
             {
                 Directory.CreateDirectory(contrastDirectory);
             }
-            if (!Directory.Exists(meanDirectory))
-            {
-                Directory.CreateDirectory(meanDirectory);
-            }
 
-            foreach (var file in Directory.EnumerateFiles(directory))
-            {
-                var info = new FileInfo(file);
-                using (var bitmap = (Bitmap)Image.FromFile(file))
-                using (var contrasted = bitmap.AdjustContrast(0.1, 0.999))
-                {
-                    contrasted.Save(Path.Combine(contrastDirectory, info.Name), ImageFormat.Bmp);
-                    using (var mean = contrasted.SetMean(128))
-                    {
-                        mean.Save(Path.Combine(meanDirectory, info.Name), ImageFormat.Bmp);
-                    }
-                }
-            }
+            Parallel.ForEach(Directory.EnumerateFiles(directory), file =>
+             {
+                 var info = new FileInfo(file);
+                 using (var bitmap = (Bitmap)Image.FromFile(file))
+                 using (var contrasted = bitmap.AdjustContrast(0.05, 0.99))
+                 {
+                     contrasted.Save(Path.Combine(contrastDirectory, info.Name), ImageFormat.Jpeg);
+                 }
+             });
         }
     }
 }
