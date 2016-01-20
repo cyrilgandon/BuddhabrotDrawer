@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuddhabrotDrawer", "BuddhabrotDrawer.csproj", "{A61E34A6-3EBC-4097-B4A1-8451CB080F7F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuddhabrotDrawerTests", "BuddhabrotDrawerTests\BuddhabrotDrawerTests.csproj", "{3100E237-FBAB-4CB8-8B07-6C5104B1B41B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +17,15 @@ Global
 		{A61E34A6-3EBC-4097-B4A1-8451CB080F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A61E34A6-3EBC-4097-B4A1-8451CB080F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A61E34A6-3EBC-4097-B4A1-8451CB080F7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3100E237-FBAB-4CB8-8B07-6C5104B1B41B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3100E237-FBAB-4CB8-8B07-6C5104B1B41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3100E237-FBAB-4CB8-8B07-6C5104B1B41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3100E237-FBAB-4CB8-8B07-6C5104B1B41B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 	EndGlobalSection
 EndGlobal

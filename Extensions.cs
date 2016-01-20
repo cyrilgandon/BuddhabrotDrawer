@@ -19,121 +19,29 @@ namespace BuddhabrotDrawer
         }
 
         /// <summary>
-        /// Return count element between 0 and max, with a logarithmic distribution
+        /// Return count element between 1 and max, with a logarithmic distribution
         /// </summary>
         /// <param name="count"></param>
         /// <param name="max"></param>
         /// <returns></returns>
         public static IEnumerable<double> LogDistribution(int count, double max)
         {
+            if(count < 2)
+            {
+                throw new ArgumentException($"The minimum number of elements is 2. You give {count}.", nameof(count));
+            }
+            if (max <= 0)
+            {
+                throw new ArgumentException($"The maximum must be strictly positive. You give {max}.", nameof(max));
+            }
             return Enumerable.Range(0, count)
                                      .Select(i =>
                                      {
-                                         return Math.Exp(i * Math.Log(max) / count);
+                                         return Math.Exp(i * Math.Log(max) / (count - 1));
                                      });
         }
 
-        public static Bitmap AdjustContrast(this Bitmap bitmap, double black = 0.05,  double white = 0.95)
-        {
-            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            var length = bitmapData.Stride * bitmapData.Height;
-
-            byte[] bytes = new byte[length];
-
-            // Copy bitmap to byte[]
-            Marshal.Copy(bitmapData.Scan0, bytes, 0, length);
-            bitmap.UnlockBits(bitmapData);
-
-            var greys = bytes.Where((by, i) => i % 3 == 0).Select(by => (int)by).ToList();
-            var histo = new int[256];
-            for (int i = 0; i < greys.Count; i++)
-            {
-                histo[greys[i]]++;
-            }
-            var total = histo.Sum();
-
-            double cumulPercent = 0;
-            double? blackLimit = null, whiteLimit = null;
-            for (int i = 0; i < histo.Length; i++)
-            {
-                cumulPercent += (histo[i] * 1d) / total;
-                if (cumulPercent > black && blackLimit == null)
-                {
-                    blackLimit = i;
-                }
-                if (cumulPercent > white && whiteLimit == null)
-                {
-                    whiteLimit = i;
-                }
-            }
-            if (black <= 0) blackLimit = 0;
-            if (white >= 1) whiteLimit = 255;
-            double a, b;
-            if (blackLimit == 0)
-            {
-                if (whiteLimit == 0)
-                {
-                    whiteLimit = 1;
-                }
-                b = 0;
-                a = 255 / whiteLimit.Value;
-            }
-            else {
-                b = 255 / (1 - whiteLimit.Value / blackLimit.Value);
-                a = (255 - b) / whiteLimit.Value;
-            }
-
-            var news = greys.Select(g =>
-            {
-                int gp = (int)(a * g + b);
-                gp = Math.Min(gp, 255);
-                gp = Math.Max(gp, 0);
-
-                return (byte)gp;
-            }).SelectMany(g => new[] { g, g, g }).ToArray();
-
-
-            var scaled = new Bitmap(bitmap.Width, bitmap.Height);
-
-            var data = scaled.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-            Marshal.Copy(news, 0, data.Scan0, news.Length);
-
-            scaled.UnlockBits(data);
-
-            return scaled;
-        }
-
-        public static Bitmap SetMean(this Bitmap bitmap, int newMean)
-        {
-            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            var length = bitmapData.Stride * bitmapData.Height;
-
-            byte[] bytes = new byte[length];
-
-            // Copy bitmap to byte[]
-            Marshal.Copy(bitmapData.Scan0, bytes, 0, length);
-            bitmap.UnlockBits(bitmapData);
-
-            var oldMean = bytes.Average(b => b);
-
-            var news = bytes.Select(by =>
-            {
-                return by * (newMean / oldMean );
-
-            }).Select(bb => (byte)bb).ToArray();
-
-            var truc = news.Average(b => b);
-            var scaled = new Bitmap(bitmap.Width, bitmap.Height);
-
-            var data = scaled.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-            Marshal.Copy(news, 0, data.Scan0, news.Length);
-
-            scaled.UnlockBits(data);
-
-            return scaled;
-        }
+    
 
 
         /// <summary>

@@ -21,20 +21,13 @@ namespace BuddhabrotDrawer
             InitializeComponent();
 
         }
-
-        async private Task DrawBrots()
-        {
-            await Task.WhenAll(
-              buddhabrotUserControl1.DrawBrot(),
-              buddhabrotUserControl2.DrawBrot(),
-              buddhabrotUserControl3.DrawBrot());
-        }
+        
         async private void btnDraw_Click(object sender, EventArgs e)
         {
             int count = 600;
-            int maxIteration = 20000;
-            int size = 200;
-            long resolution = 10000000;
+            int maxIteration = 200;
+            int size = 500;
+            long resolution = 100000000;
             var directory = Path.Combine("C:\\", "temp", $"{DateTime.Now.ToFileTime()}-Buddhabrot-c{count}-m{maxIteration}");
             if (!Directory.Exists(directory))
             {
@@ -70,26 +63,6 @@ namespace BuddhabrotDrawer
             //            scaled.Save(Path.Combine(directory, file), ImageFormat.Jpeg);
             //        }
             //    }));
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var directory = @"C:\temp\130969712683370538-Buddhabrot-c600-m20000";
-            var contrastDirectory = Path.Combine(directory, "contrast");
-            if (!Directory.Exists(contrastDirectory))
-            {
-                Directory.CreateDirectory(contrastDirectory);
-            }
-
-            Parallel.ForEach(Directory.EnumerateFiles(directory), file =>
-             {
-                 var info = new FileInfo(file);
-                 using (var bitmap = (Bitmap)Image.FromFile(file))
-                 using (var contrasted = bitmap.AdjustContrast(0.05, 0.99))
-                 {
-                     contrasted.Save(Path.Combine(contrastDirectory, info.Name), ImageFormat.Jpeg);
-                 }
-             });
         }
     }
 }
