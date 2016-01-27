@@ -12,6 +12,26 @@ namespace BuddhabrotDrawer
 {
     public static class Extensions
     {
+        public static IList<TValue> Shuffle<TValue>(this IEnumerable<TValue> source, Random random = null)
+        {
+            var dest = source.ToList();
+            if (random == null)
+            {
+                random = new Random();
+            }
+            for (var i = 0; i < dest.Count; i++)
+            {
+                dest.Swap(i, random.Next(i, dest.Count));
+            }
+            return dest;
+        }
+
+        public static void Swap<TValue>(this IList<TValue> source, int i, int j)
+        {
+            var temp = source[i];
+            source[i] = source[j];
+            source[j] = temp;
+        }
         public static TParam ThrowIfNull<TParam>(this TParam param, string paramName) where TParam : class
         {
             if (param == null) throw new ArgumentNullException(paramName);

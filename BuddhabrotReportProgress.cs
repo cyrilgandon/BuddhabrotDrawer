@@ -11,9 +11,12 @@ namespace BuddhabrotDrawer
 
         public Buddhabrot Buddhabrot { get; }
         public bool Completed { get; }
-        public BuddhabrotReportProgress(Buddhabrot buddhabrot, bool completed = false )
+        public TimeSpan Elapsed { get; }
+        
+        public BuddhabrotReportProgress(Buddhabrot buddhabrot, TimeSpan elapsed, bool completed = false )
         {
             Buddhabrot = buddhabrot.ThrowIfNull(nameof(buddhabrot));
+            Elapsed = elapsed;
             Completed = completed;
         }
     }

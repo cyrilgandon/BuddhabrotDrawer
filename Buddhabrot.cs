@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,27 +11,34 @@ namespace BuddhabrotDrawer
 {
     public class Buddhabrot
     {
-      const  int t = 2;
+        const int t = 2;
         private const double XMin = -t;
         private const double XMax = t;
         private const double YMin = -t;
         private const double Ymax = t;
 
         public int[,] Hits { get; }
-        private readonly Random Rand = new Random();
+        public Random Rand {get;}
 
         public bool Completed { get; private set; }
         public int Size { get; }
         public long HitsMax { get; }
         public int Iteration { get; }
 
+        private readonly Stopwatch _stopwatch = new Stopwatch();
+
         public int Completion => (int)(((TotalHits * 1d) / HitsMax) * 100);
         public long TotalHits { get; set; }
-        public Buddhabrot(int size, int iteration, long hitsMax)
+        public Buddhabrot(int size, int iteration, long hitsMax, Random rand = null)
         {
             if (size <= 0)
             {
                 throw new ArgumentException("size must be greater than 0");
+            }
+            Rand = rand;
+            if(Rand == null)
+            {
+                Rand = new Random();
             }
             Size = size;
             HitsMax = hitsMax;
@@ -42,6 +50,7 @@ namespace BuddhabrotDrawer
 
         public void Run(IProgress<BuddhabrotReportProgress> progress = null)
         {
+            _stopwatch.Start();
             long previousTotalHits = 0;
             do
             {
@@ -52,7 +61,7 @@ namespace BuddhabrotDrawer
                     previousTotalHits = TotalHits;
                     if (progress != null)
                     {
-                        progress.Report(new BuddhabrotReportProgress(this));
+                        progress.Report(new BuddhabrotReportProgress(this, _stopwatch.Elapsed));
                     }
                 }
             }
@@ -61,7 +70,7 @@ namespace BuddhabrotDrawer
             Completed = true;
             if (progress != null)
             {
-                progress.Report(new BuddhabrotReportProgress(this, true));
+                progress.Report(new BuddhabrotReportProgress(this, _stopwatch.Elapsed, true));
             }
 
         }
@@ -123,32 +132,21 @@ namespace BuddhabrotDrawer
                     }
                     else
                     {
-                       // break;
+                        // break;
                     }
 
                     y = 2 * x * y + cy;
                     x = xx - yy + cx;
                     xx = x * x;
                     yy = y * y;
-                    if (xx + yy >= EscapeNorm*10) break;
+                    if (xx + yy >= EscapeNorm * 10) break;
                 }
 
             }
 
             return TotalHits;
         }
-        
 
-        public static string GetSavePath(int iteration)
-        {
-            var directory = Path.Combine("C:\\", "temp", "buddhabrot");
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            string file = $"{DateTime.Now.ToFileTime()}_{iteration}_iteration_buddhabrot.bmp";
 
-            return Path.Combine(directory, file);
-        }
     }
 }

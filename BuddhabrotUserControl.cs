@@ -43,7 +43,7 @@ namespace BuddhabrotDrawer
                 {
                     var drawer = new BuddhabrotMonoColor();
                     var bitmap = drawer.Draw(buddhabrot);
-                    bitmap.Save(Buddhabrot.GetSavePath(buddhabrot.Iteration), ImageFormat.Bmp);
+                    bitmap.Save(Extensions.GetSavePath(buddhabrot.Iteration), ImageFormat.Bmp);
                 }
             });
 
